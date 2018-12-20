@@ -9,7 +9,7 @@ from caffe.proto import caffe_pb2
 from eyewitness.detection_utils import DetectionResult
 from eyewitness.image_id import ImageId
 from eyewitness.object_detector import ObjectDetector
-from eyewitness.image_utils import (ImageHandler, swap_channel_rgb_bgr)
+from eyewitness.image_utils import ImageHandler
 from google.protobuf import text_format
 from PIL import Image
 
@@ -34,7 +34,7 @@ class PeLeeDetectorWrapper(ObjectDetector):
         self.transformer = caffe.io.Transformer({'data': self.net.blobs['data'].data.shape})
         self.transformer.set_transpose('data', (2, 0, 1))
         self.transformer.set_input_scale('data', 0.017)
-        self.transformer.set_mean('data', np.array([103.94,116.78,123.68])) # mean pixel
+        self.transformer.set_mean('data', np.array([103.94, 116.78, 123.68]))  # mean pixel
         # the reference model operates on images in [0,255] range instead of [0,1]
         self.transformer.set_raw_scale('data', 255)
         # the reference model has channels in BGR order instead of RGB
@@ -62,7 +62,7 @@ class PeLeeDetectorWrapper(ObjectDetector):
             labels = [labels]
         for label in labels:
             found = False
-            for i in xrange(0, num_labels):
+            for i in range(0, num_labels):
                 if label == labelmap.item[i].label:
                     found = True
                     labelnames.append(labelmap.item[i].display_name)
@@ -85,7 +85,7 @@ class PeLeeDetectorWrapper(ObjectDetector):
         -------
         DetectionResult
         """
-        results = self.predict(image_array)
+        results = self.predict(np.array(image))
 
         detected_objects = []
         for i in range(0, results.shape[0]):
