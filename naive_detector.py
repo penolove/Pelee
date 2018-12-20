@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     object_detector = PeLeeDetectorWrapper(params, threshold=0.6)
 
-    image = Image.open('examples/images/5566.jpg')
+    image = Image.open('samples/5566.jpg')
     image_id = ImageId(channel='demo', timestamp=arrow.now().timestamp, file_format='jpg')
     detection_result = object_detector.detect(image, image_id)
     ImageHandler.draw_bbox(image, detection_result.detected_objects)
