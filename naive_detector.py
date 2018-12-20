@@ -35,8 +35,6 @@ class PeLeeDetectorWrapper(ObjectDetector):
         self.transformer.set_transpose('data', (2, 0, 1))
         self.transformer.set_input_scale('data', 0.017)
         self.transformer.set_mean('data', np.array([103.94, 116.78, 123.68]))  # mean pixel
-        # the reference model operates on images in [0,255] range instead of [0,1]
-        self.transformer.set_raw_scale('data', 255)
         # the reference model has channels in BGR order instead of RGB
         self.transformer.set_channel_swap('data', (2, 1, 0))
 
