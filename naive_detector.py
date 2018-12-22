@@ -126,9 +126,9 @@ if __name__ == '__main__':
         caffe.set_mode_gpu()
 
     params = {
-        'labelmap_file': 'model/voc/labelmap_voc.prototxt',
-        'model_def': 'model/voc/deploy_merged.prototxt',
-        'model_weights': 'model/voc/pelee_merged.caffemodel',
+        'labelmap_file': 'examples/pelee/model/voc/labelmap_voc.prototxt',
+        'model_def': 'examples/pelee/model/voc/deploy_merged.prototxt',
+        'model_weights': 'examples/pelee/model/voc/pelee_merged.caffemodel',
     }
 
     object_detector = PeLeeDetectorWrapper(params, threshold=0.6)
