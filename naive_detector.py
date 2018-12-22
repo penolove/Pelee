@@ -118,22 +118,23 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu_id', type=int, default=0)
+    parser.add_argument('--repo_path', type=str, default='/opt/caffe/examples/pelee')
     args = parser.parse_args()
-
+    repo_path = args.repo_path
     # gpu preparation
     if args.gpu_id >= 0:
         caffe.set_device(args.gpu_id)
         caffe.set_mode_gpu()
 
     params = {
-        'labelmap_file': 'examples/pelee/model/voc/labelmap_voc.prototxt',
-        'model_def': 'examples/pelee/model/voc/deploy_merged.prototxt',
-        'model_weights': 'examples/pelee/model/voc/pelee_merged.caffemodel',
+        'labelmap_file': os.path.join(repo_path, 'model/voc/labelmap_voc.prototxt'),
+        'model_def': os.path.join(repo_path, 'model/voc/deploy_merged.prototxt'),
+        'model_weights': os.path.join(repo_path, 'model/voc/pelee_merged.caffemodel'),
     }
 
     object_detector = PeLeeDetectorWrapper(params, threshold=0.6)
 
-    image = Image.open('samples/5566.jpg')
+    image = Image.open(os.path.join(repo_path, 'samples/5566.jpg'))
     image_id = ImageId(channel='demo', timestamp=arrow.now().timestamp, file_format='jpg')
     detection_result = object_detector.detect(image, image_id)
     ImageHandler.draw_bbox(image, detection_result.detected_objects)
