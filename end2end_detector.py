@@ -68,7 +68,7 @@ def line_detection_result_filter(detection_result):
 
 
 if __name__ == '__main__':
-    args = argparse.ArgumentParser()
+    args = parser.parse_args()
 
     # image producer from webcam
     image_producer = InMemoryImageProducer(0, interval_s=args.interval_s)
