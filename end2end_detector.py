@@ -5,17 +5,16 @@ import arrow
 import cv2
 import time
 import caffe
+import PIL
 from eyewitness.config import (IN_MEMORY, BBOX)
 from eyewitness.image_id import ImageId
-from eyewitness.image_utils import (ImageProducer, swap_channel_rgb_bgr, ImageHandler)
+from eyewitness.image_utils import (ImageProducer, swap_channel_rgb_bgr, ImageHandler, Image)
 from eyewitness.result_handler.db_writer import BboxPeeweeDbWriter
 from eyewitness.result_handler.line_detection_result_handler import LineAnnotationSender
 from naive_detector import PeLeeDetectorWrapper
 from peewee import SqliteDatabase
-from PIL import Image
 
 
-# class YOLO defines the default value, so suppress any default here
 parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 '''
 Command line options
@@ -47,7 +46,7 @@ class InMemoryImageProducer(ImageProducer):
             for iter_ in range(5):
                 self.vid.grab()
             _, frame = self.vid.read()
-            yield Image.fromarray(swap_channel_rgb_bgr(frame))
+            yield PIL.Image.fromarray(swap_channel_rgb_bgr(frame))
             time.sleep(self.interval_s)
 
 
@@ -109,8 +108,9 @@ if __name__ == '__main__':
 
     for image in image_producer.produce_image():
         image_id = ImageId(channel='demo', timestamp=arrow.now().timestamp, file_format='jpg')
+        image_obj = Image(image_id, pil_image_obj=image)
         bbox_sqlite_handler.register_image(image_id, {})
-        detection_result = object_detector.detect(image, image_id)
+        detection_result = object_detector.detect(image_obj)
 
         # draw and save image, as object detected update detection result
         if len(detection_result.detected_objects) > 0:

@@ -5,13 +5,13 @@ import numpy as np
 
 import caffe
 import arrow
+import PIL
 from caffe.proto import caffe_pb2
 from eyewitness.detection_utils import DetectionResult
 from eyewitness.image_id import ImageId
 from eyewitness.object_detector import ObjectDetector
-from eyewitness.image_utils import ImageHandler
+from eyewitness.image_utils import (ImageHandler, Image)
 from google.protobuf import text_format
-from PIL import Image
 
 
 class PeLeeDetectorWrapper(ObjectDetector):
@@ -68,22 +68,20 @@ class PeLeeDetectorWrapper(ObjectDetector):
             assert found
         return labelnames
 
-    def detect(self, image, image_id):
+    def detect(self, image_obj):
         """
         need to implement detection method which return DetectionResult obj
 
         Parameters
         ----------
-        image: PIL.Image
-            PIL.Image instance
-        image_id: Union[str, ImageId]
-            image_id
+        image_obj: eyewitness.image_utils.Image
+            eyewitness image obj
 
         Returns
         -------
         DetectionResult
         """
-        results = self.predict(np.array(image))
+        results = self.predict(np.array(image_obj.pil_image_obj))
 
         detected_objects = []
         for i in range(0, results.shape[0]):
@@ -102,7 +100,7 @@ class PeLeeDetectorWrapper(ObjectDetector):
             detected_objects.append([x1, y1, x2, y2, label, score, ''])
 
         image_dict = {
-            'image_id': image_id,
+            'image_id': image_obj.image_id,
             'detected_objects': detected_objects,
         }
         detection_result = DetectionResult(image_dict)
@@ -134,8 +132,9 @@ if __name__ == '__main__':
 
     object_detector = PeLeeDetectorWrapper(params, threshold=0.6)
 
-    image = Image.open(os.path.join(repo_path, 'samples/5566.jpg'))
+    raw_image_path = os.path.join(repo_path, 'samples/5566.jpg')
     image_id = ImageId(channel='demo', timestamp=arrow.now().timestamp, file_format='jpg')
-    detection_result = object_detector.detect(image, image_id)
-    ImageHandler.draw_bbox(image, detection_result.detected_objects)
-    ImageHandler.save(image, "detected_image/drawn_image.jpg")
+    image_obj = Image(image_id, raw_image_path=raw_image_path)
+    detection_result = object_detector.detect(image_obj)
+    ImageHandler.draw_bbox(image_obj.pil_image_obj, detection_result.detected_objects)
+    ImageHandler.save(image_obj.pil_image_obj, "detected_image/drawn_image.jpg")
