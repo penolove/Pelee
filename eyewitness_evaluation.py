@@ -25,9 +25,6 @@ parser.add_argument(
 if __name__ == '__main__':
     args = parser.parse_args()
 
-    # image producer from webcam
-    image_producer = InMemoryImageProducer(0, interval_s=args.interval_s)
-
     # gpu preparation
     if args.gpu_id >= 0:
         caffe.set_device(args.gpu_id)
