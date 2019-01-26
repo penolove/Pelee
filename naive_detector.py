@@ -7,10 +7,11 @@ import caffe
 import arrow
 import PIL
 from caffe.proto import caffe_pb2
+from eyewitness.config import BoundedBoxObject
 from eyewitness.detection_utils import DetectionResult
 from eyewitness.image_id import ImageId
-from eyewitness.object_detector import ObjectDetector
 from eyewitness.image_utils import (ImageHandler, Image)
+from eyewitness.object_detector import ObjectDetector
 from google.protobuf import text_format
 
 
@@ -101,7 +102,7 @@ class PeLeeDetectorWrapper(ObjectDetector):
             x2 = int(round(results[i, 2]))
             y2 = int(round(results[i, 3]))
 
-            detected_objects.append([x1, y1, x2, y2, label, score, ''])
+            detected_objects.append(BoundedBoxObject(x1, y1, x2, y2, label, score, ''))
 
         image_dict = {
             'image_id': image_obj.image_id,
