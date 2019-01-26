@@ -38,6 +38,10 @@ class PeLeeDetectorWrapper(ObjectDetector):
         # the reference model has channels in BGR order instead of RGB
         self.transformer.set_channel_swap('data', (2, 1, 0))
 
+    @property
+    def valid_labels(self):
+        return set(str(i.display_name) for i in self.labelmap.item)
+
     def predict(self, image_array):
         transformed_image = self.transformer.preprocess('data', image_array)
         self.net.blobs['data'].data[...] = transformed_image
