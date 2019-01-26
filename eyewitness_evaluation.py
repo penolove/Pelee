@@ -1,5 +1,6 @@
 import argparse
 import os
+import logging
 
 import caffe
 from eyewitness.dataset_util import BboxDataSet
@@ -23,6 +24,7 @@ parser.add_argument(
 )
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     args = parser.parse_args()
 
     # gpu preparation
@@ -42,5 +44,5 @@ if __name__ == '__main__':
     dataset_folder = 'VOC2007'
     dataset_VOC_2007 = BboxDataSet(dataset_folder, 'VOC2007')
     bbox_map_evaluator = BboxMAPEvaluator(test_set_only=False)
-    # which will lead to ~0.73
+    # which will lead to ~0.58
     print(bbox_map_evaluator.evaluate(object_detector, dataset_VOC_2007)['mAP'])
